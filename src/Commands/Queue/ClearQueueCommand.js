@@ -8,20 +8,13 @@ const colors = require("colors");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("remove-track")
-    .setDescription("Remove a song from the queue.")
-    .addIntegerOption((option) =>
-      option
-        .setName("position")
-        .setDescription("The position of the song to delete.")
-        .setRequired(true)
-    ),
+    .setName("clear-queue")
+    .setDescription("Empty the queue."),
 
   /**
    * @param {ChatInputCommandInteraction} interaction
    */
   async execute(interaction) {
-    const removeTrackIndex = interaction.options.getInteger("position");
     const voiceChannel = interaction.member.voice.channel;
     const clientVoiceChannel = interaction.guild.members.me.voice.channel;
     const player = interaction.client.player;
@@ -33,7 +26,9 @@ module.exports = {
           new EmbedBuilder()
             .setColor("#ED4245")
             .setDescription(
-              `${process.env.FAIL_EMOJI || '❌'} You must be in a voice channel to use this command.`
+              `${
+                process.env.FAIL_EMOJI || "❌"
+              } You must be in a voice channel to use this command.`
             ),
         ],
         ephemeral: true,
@@ -45,7 +40,9 @@ module.exports = {
           new EmbedBuilder()
             .setColor("#ED4245")
             .setDescription(
-              `${process.env.FAIL_EMOJI || '❌'} You must be in the same voice channel as me to use this command.`
+              `${
+                process.env.FAIL_EMOJI || "❌"
+              } You must be in the same voice channel as me to use this command.`
             ),
         ],
         ephemeral: true,
@@ -57,47 +54,23 @@ module.exports = {
           new EmbedBuilder()
             .setColor("#ED4245")
             .setDescription(
-              `${process.env.FAIL_EMOJI || '❌'} There are no songs in the queue.`
-            ),
-        ],
-        ephemeral: true,
-      });
-
-    if (removeTrackIndex - 1 === 0)
-      return await interaction.reply({
-        embeds: [
-          new EmbedBuilder()
-            .setColor("#ED4245")
-            .setDescription(
-              `${process.env.FAIL_EMOJI || '❌'} You cannot remove the currently playing song.`
+              `${
+                process.env.FAIL_EMOJI || "❌"
+              } There are no songs in the queue.`
             ),
         ],
         ephemeral: true,
       });
 
     try {
-      if (removeTrackIndex < 1 || removeTrackIndex > queue.songs.length - 1)
-        return await interaction.reply({
-          embeds: [
-            new EmbedBuilder()
-              .setColor("#ED4245")
-              .setDescription(
-                `${process.env.FAIL_EMOJI || '❌'} The position must be between 1 and ${
-                  queue.songs.length - 1
-                }.`
-              ),
-          ],
-          ephemeral: true,
-        });
-
-      player.removeFromQueue(interaction, removeTrackIndex);
+      player.clearQueue(interaction);
 
       return await interaction.reply({
         embeds: [
           new EmbedBuilder()
             .setColor("#57F287")
             .setDescription(
-              `${process.env.SUCCESS_EMOJI || '✅'} Removed track at position \`#${removeTrackIndex}\`.`
+              `${process.env.SUCCESS_EMOJI || "✅"} The queue has been cleared.`
             ),
         ],
       });
@@ -114,7 +87,9 @@ module.exports = {
           new EmbedBuilder()
             .setColor("#ED4245")
             .setDescription(
-              `${process.env.FAIL_EMOJI || '❌'} An error occurred while trying to remove the song.`
+              `${
+                process.env.FAIL_EMOJI || "❌"
+              } An error occurred while trying to remove the song.`
             ),
         ],
         ephemeral: true,

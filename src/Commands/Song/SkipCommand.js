@@ -51,7 +51,7 @@ module.exports = {
         ephemeral: true,
       });
 
-    if (!queue || queue.songs.length === 1)
+    if (!queue || !queue.songs.length)
       return await interaction.reply({
         embeds: [
           new EmbedBuilder()

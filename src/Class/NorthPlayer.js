@@ -13,7 +13,7 @@ class NorthPlayer extends DisTube {
       emitNewSongOnly: true,
       leaveOnStop: false,
       youtubeCookie: process.env.YOUTUBE_COOKIE,
-      youtubeIdentityToken: process.env.YOUTUBE_IDENTITY_TOKEN,
+      youtubeIdentityToken: process.env.YOUTUBE_ID,
       emptyCooldown: 300,
       ytdlOptions: {
         lang: "en",
@@ -66,18 +66,36 @@ class NorthPlayer extends DisTube {
    * @param {ChatInputCommandInteraction} interaction Command interaction.
    * @param {Number} index Song index.
    */
-  removeTrack(interaction, index) {
+  removeFromQueue(interaction, index) {
     // Get the queue.
     const queue = this.queues.get(interaction.guild.id);
 
-    if (typeof index !== 'number') throw new TypeError('Index must be a number.');
-    if (!interaction instanceof ChatInputCommandInteraction) throw new TypeError('Interaction must be an instance of ChatInputCommandInteraction.');
+    if (typeof index !== "number")
+      throw new TypeError("Index must be a number.");
+    if (!interaction instanceof ChatInputCommandInteraction)
+      throw new TypeError(
+        "Interaction must be an instance of ChatInputCommandInteraction."
+      );
 
     // Check if the index is valid.
-    if (index < 1 || index > queue.songs.length) throw new RangeError('Index range must be between 1 and the queue length.');
+    if (index < 1 || index > queue.songs.length)
+      throw new RangeError(
+        "Index range must be between 1 and the queue length."
+      );
 
     // Remove the song from the queue.
     queue.songs.splice(index - 1, 1);
+
+    return true;
+  }
+
+  /**
+   * Clear the queue.
+   * @param {ChatInputCommandInteraction} interaction Command interaction.
+   */
+  clearQueue(interaction) {
+    const queue = this.queues.get(interaction.guild.id);
+    if (Array.isArray(queue.songs)) queue.songs = [];
 
     return true;
   }

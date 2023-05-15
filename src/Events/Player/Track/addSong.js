@@ -19,7 +19,9 @@ module.exports = {
             .setColor(
               song.metadata.interaction.guild.members.me.displayHexColor
             )
-            .setDescription(`🎶 Added \`${song.name}\` to the queue !`),
+            .setDescription(
+              `🎶 Added [${song.metadata.trackArtist} - ${song.metadata.trackName}](${song.metadata.trackURL}) to the queue !`
+            ),
         ],
       });
     } catch (error) {

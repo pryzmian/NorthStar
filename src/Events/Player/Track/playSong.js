@@ -20,8 +20,10 @@ module.exports = {
               song.metadata.interaction.guild.members.me.displayHexColor
             )
             .setAuthor({ name: "Now Playing" })
-            .setDescription(`[${song.name}](${song.url})`)
-            .setThumbnail(song.thumbnail)
+            .setDescription(
+              `[${song.metadata.trackArtist} - ${song.metadata.trackName}](${song.metadata.trackURL})`
+            )
+            .setThumbnail(song.metadata.trackThumbnail)
             .setFooter({
               text: `Requested by ${song.user.tag}`,
               iconURL: song.user.displayAvatarURL(),

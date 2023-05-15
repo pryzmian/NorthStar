@@ -64,13 +64,7 @@ module.exports = {
         ],
       });
 
-      return await player.play(voiceChannel, searchInput, {
-        member: interaction.member,
-        textChannel: interaction.channel,
-        metadata: {
-          interaction: interaction,
-        },
-      });
+      await player.playTrack(interaction, searchInput);
     } catch (error) {
       console.error(
         `${colors.blue(new Date().toLocaleString())} ${colors.white(
@@ -79,7 +73,7 @@ module.exports = {
       );
 
       player.voices?.leave(voiceChannel.id);
-      return await interaction.reply({
+      return await interaction.editReply({
         embeds: [
           new EmbedBuilder()
             .setColor("#ED4245")

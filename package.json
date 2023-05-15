@@ -19,7 +19,6 @@
   },
   "homepage": "https://github.com/aarons124/NorthStar#readme",
   "dependencies": {
-    "@discordjs/opus": "0.9.0",
     "@discordjs/voice": "0.16.0",
     "@distube/deezer": "1.0.0",
     "@distube/soundcloud": "1.3.2",
@@ -29,10 +28,8 @@
     "discord.js": "14.11.0",
     "distube": "4.0.4",
     "dotenv": "16.0.3",
-    "libsodium-wrappers": "0.7.11"
-  },
-  "engines": {
-    "node": "18.x",
-    "pnpm": "8.x"
+    "libsodium-wrappers": "0.7.11",
+    "opusscript": "0.1.0",
+    "spotify-url-info": "3.2.3"
   }
 }

@@ -5,7 +5,7 @@ const {
   Status,
   ActivityType,
 } = require("discord.js");
-const { NorthPlayer } = require("./NorthPlayer");
+const { CustomDisTubePlayer } = require("./NorthPlayer");
 const { registerCommands } = require("../Handlers/Commands");
 const { registerDiscordEvents } = require("../Handlers/DiscordEvents");
 const { registerPlayerEvents } = require("../Handlers/PlayerEvents");
@@ -37,7 +37,7 @@ class NorthFace extends Client {
     });
 
     this.commands = new Collection();
-    this.player = new NorthPlayer(this);
+    this.player = new CustomDisTubePlayer(this);
   }
 
   async start() {

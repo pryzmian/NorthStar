@@ -26,6 +26,7 @@ module.exports = {
     const clientVoiceChannel = interaction.guild.members.me.voice.channel;
     const player = interaction.client.player;
     const queue = player.queues.get(interaction.guildId);
+    const t = interaction.client.t(interaction.locale);
 
     if (!voiceChannel)
       return await interaction.reply({
@@ -33,7 +34,7 @@ module.exports = {
           new EmbedBuilder()
             .setColor("#ED4245")
             .setDescription(
-              `${process.env.FAIL_EMOJI} You must be in a voice channel to use this command.`
+              `${process.env.FAIL_EMOJI} ${t.messages.errors.notInVoiceChannel.get()}`
             ),
         ],
         ephemeral: true,
@@ -45,7 +46,7 @@ module.exports = {
           new EmbedBuilder()
             .setColor("#ED4245")
             .setDescription(
-              `${process.env.FAIL_EMOJI} You must be in the same voice channel as me to use this command.`
+              `${process.env.FAIL_EMOJI} ${t.messages.errors.notInSameVoiceChannel.get()}`
             ),
         ],
         ephemeral: true,
@@ -57,7 +58,7 @@ module.exports = {
           new EmbedBuilder()
             .setColor("#ED4245")
             .setDescription(
-              `${process.env.FAIL_EMOJI} There are no songs in the queue.`
+              `${process.env.FAIL_EMOJI} ${t.messages.errors.noSongsInQueue.get()}`
             ),
         ],
         ephemeral: true,
@@ -71,7 +72,7 @@ module.exports = {
               new EmbedBuilder()
                 .setColor("#ED4245")
                 .setDescription(
-                  `${process.env.FAIL_EMOJI} Invalid song position.`
+                  `${process.env.FAIL_EMOJI} ${t.messages.errors.invalidSongPosition.get()}`
                 ),
             ],
             ephemeral: true,
@@ -84,7 +85,7 @@ module.exports = {
             new EmbedBuilder()
               .setColor(interaction.guild.members.me.displayHexColor)
               .setDescription(
-                `${process.env.SUCCESS_EMOJI} Skipped to song at position ${skipToIndex}.`
+                `${process.env.SUCCESS_EMOJI} ${t.messages.success.skippedToPosition(skipToIndex).get()}`
               ),
           ],
         });
@@ -97,7 +98,7 @@ module.exports = {
           new EmbedBuilder()
             .setColor(interaction.guild.members.me.displayHexColor)
             .setDescription(
-              `${process.env.SUCCESS_EMOJI} Skipped the current song.`
+              `${process.env.SUCCESS_EMOJI} ${t.messages.success.skippedCurrentSong.get()}`
             ),
         ],
       });
@@ -114,7 +115,7 @@ module.exports = {
           new EmbedBuilder()
             .setColor("#ED4245")
             .setDescription(
-              `${process.env.FAIL_EMOJI} An error occurred while trying to skip the song.`
+              `${process.env.FAIL_EMOJI} ${t.messages.errors.errorSkippingSong.get()}`
             ),
         ],
         ephemeral: true,

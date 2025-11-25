@@ -19,6 +19,7 @@ module.exports = {
     const clientVoiceChannel = interaction.guild.members.me.voice.channel;
     const player = interaction.client.player;
     const queue = player.queues.get(interaction.guildId);
+    const t = interaction.client.t(interaction.locale);
 
     if (!voiceChannel)
       return await interaction.reply({
@@ -28,7 +29,7 @@ module.exports = {
             .setDescription(
               `${
                 process.env.FAIL_EMOJI || "❌"
-              } You must be in a voice channel to use this command.`
+              } ${t.messages.errors.notInVoiceChannel.get()}`
             ),
         ],
         ephemeral: true,
@@ -42,7 +43,7 @@ module.exports = {
             .setDescription(
               `${
                 process.env.FAIL_EMOJI || "❌"
-              } You must be in the same voice channel as me to use this command.`
+              } ${t.messages.errors.notInSameVoiceChannel.get()}`
             ),
         ],
         ephemeral: true,
@@ -56,7 +57,7 @@ module.exports = {
             .setDescription(
               `${
                 process.env.FAIL_EMOJI || "❌"
-              } There are no songs in the queue.`
+              } ${t.messages.errors.noSongsInQueue.get()}`
             ),
         ],
         ephemeral: true,
@@ -70,7 +71,7 @@ module.exports = {
           new EmbedBuilder()
             .setColor("#57F287")
             .setDescription(
-              `${process.env.SUCCESS_EMOJI || "✅"} The queue has been cleared.`
+              `${process.env.SUCCESS_EMOJI || "✅"} ${t.messages.success.queueCleared.get()}`
             ),
         ],
       });
@@ -89,7 +90,7 @@ module.exports = {
             .setDescription(
               `${
                 process.env.FAIL_EMOJI || "❌"
-              } An error occurred while trying to remove the song.`
+              } ${t.messages.errors.errorClearingQueue.get()}`
             ),
         ],
         ephemeral: true,

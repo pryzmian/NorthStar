@@ -25,6 +25,7 @@ module.exports = {
     const voiceChannel = interaction.member.voice.channel;
     const clientVoiceChannel = interaction.guild.members.me.voice.channel;
     const player = interaction.client.player;
+    const t = interaction.client.t(interaction.locale);
 
     if (!voiceChannel)
       return await interaction.reply({
@@ -32,7 +33,7 @@ module.exports = {
           new EmbedBuilder()
             .setColor("#ED4245")
             .setDescription(
-              `${process.env.FAIL_EMOJI} You must be in a voice channel to use this command.`
+              `${process.env.FAIL_EMOJI} ${t.messages.errors.notInVoiceChannel.get()}`
             ),
         ],
         ephemeral: true,
@@ -44,7 +45,7 @@ module.exports = {
           new EmbedBuilder()
             .setColor("#ED4245")
             .setDescription(
-              `${process.env.FAIL_EMOJI} You must be in the same voice channel as me to use this command.`
+              `${process.env.FAIL_EMOJI} ${t.messages.errors.notInSameVoiceChannel.get()}`
             ),
         ],
         ephemeral: true,
@@ -59,7 +60,7 @@ module.exports = {
           new EmbedBuilder()
             .setColor(interaction.guild.members.me.displayHexColor)
             .setDescription(
-              `${process.env.LOAD_EMOJI} Searching for \`${searchInput}\`...`
+              `${process.env.LOAD_EMOJI} ${t.messages.success.searchingSong(searchInput).get()}`
             ),
         ],
       });
@@ -78,7 +79,7 @@ module.exports = {
           new EmbedBuilder()
             .setColor("#ED4245")
             .setDescription(
-              `${process.env.FAIL_EMOJI} An error occurred while trying to play the song.`
+              `${process.env.FAIL_EMOJI} ${t.messages.errors.errorPlayingSong.get()}`
             ),
         ],
         ephemeral: true,

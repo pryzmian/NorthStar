@@ -23,6 +23,7 @@ function LangRouter(userLocale, defaultLang, langs) {
            * Gets the value from a specific locale
            * @param {string} locale - The locale to get the value from
            * @returns {any} The locale value
+           * @throws {Error} If locale is undefined, not found, or key path is invalid
            */
           function getValue(locale) {
             if (typeof locale === "undefined") {
@@ -35,7 +36,14 @@ function LangRouter(userLocale, defaultLang, langs) {
             }
 
             for (const i of route) {
+              if (value === undefined || value === null) {
+                throw new Error(`Key path "${route.join(".")}" not found in locale "${locale}"`);
+              }
               value = value[i];
+            }
+
+            if (value === undefined) {
+              throw new Error(`Key path "${route.join(".")}" not found in locale "${locale}"`);
             }
 
             return value;
@@ -43,10 +51,22 @@ function LangRouter(userLocale, defaultLang, langs) {
 
           return (locale) => {
             let result;
+            let success = false;
+            
             try {
               result = getValue(locale ?? userLocale);
+              success = true;
             } catch {
-              result = getValue(defaultLang);
+              try {
+                result = getValue(defaultLang);
+                success = true;
+              } catch {
+                // Return the key path if neither locale has the key
+              }
+            }
+
+            if (!success) {
+              return route.join(".");
             }
 
             const value =

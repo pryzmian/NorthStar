@@ -1,35 +1,56 @@
 {
-  "name": "northstar",
-  "description": "NorthStar, A discord music bot that is easy to use and setup. Supports Spotify, YouTube, Soundcloud, Deezer, and more!",
-  "version": "1.0.0",
-  "main": "src/index",
-  "scripts": {
-    "start": "node -r dotenv/config src/index.js",
-    "update": "npm cache clean --force && npm install"
-  },
-  "keywords": [],
-  "author": "Aaron Sandoval",
-  "license": "Apache-2.0",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/aarons124/NorthStar.git"
-  },
-  "bugs": {
-    "url": "https://github.com/aarons124/NorthStar/issues"
-  },
-  "homepage": "https://github.com/aarons124/NorthStar#readme",
-  "dependencies": {
-    "@discordjs/voice": "0.16.0",
-    "@distube/deezer": "1.0.0",
-    "@distube/soundcloud": "1.3.2",
-    "@distube/spotify": "1.5.1",
-    "@distube/yt-dlp": "1.1.3",
-    "colors": "1.4.0",
-    "discord.js": "14.11.0",
-    "distube": "4.0.4",
-    "dotenv": "16.0.3",
-    "libsodium-wrappers": "0.7.11",
-    "opusscript": "0.1.0",
-    "spotify-url-info": "3.2.3"
-  }
+    "name": "northstar",
+    "version": "1.0.0",
+    "description": "Yume, a Discord music bot that is easy to use and set up. Supports Spotify, YouTube, Soundcloud, Deezer, and more!",
+    "author": "Aaron Sandoval",
+    "license": "Apache-2.0",
+    "homepage": "https://github.com/aarons124/Yume#readme",
+    "type": "module",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/aarons124/Yume.git"
+    },
+    "bugs": {
+        "url": "https://github.com/aarons124/Yume/issues"
+    },
+    "main": "dist/index.js",
+    "scripts": {
+        "dev": "tsx ./src/index.ts --dev --debug",
+        "build": "tsc",
+        "start": "node dist/index.js",
+        "lint": "biome lint --write ./src",
+        "format": "biome format --write ./src",
+        "typecheck": "tsc --noEmit",
+        "prepare": "husky"
+    },
+    "dependencies": {
+        "@prisma/client": "^7.0.0",
+        "@prisma/extension-accelerate": "^3.0.0",
+        "@slipher/redis-adapter": "^0.0.5",
+        "dotenv": "^17.2.3",
+        "hoshimi": "github:Ganyu-Studios/hoshimi#lib",
+        "seyfert": "github:tiramisulabs/seyfert"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "^2.3.7",
+        "@types/node": "^24.10.1",
+        "husky": "^9.1.7",
+        "lint-staged": "^16.2.7",
+        "prisma": "^7.0.0",
+        "tsx": "^4.20.6",
+        "typescript": "^5.9.3"
+    },
+    "lint-staged": {
+        "*.{ts,tsx,js,jsx,json}": [
+            "biome format --write",
+            "biome lint"
+        ]
+    },
+    "pnpm": {
+        "onlyBuiltDependencies": [
+            "@biomejs/biome",
+            "esbuild"
+        ]
+    },
+    "packageManager": "pnpm@10.24.0+sha512.01ff8ae71b4419903b65c60fb2dc9d34cf8bb6e06d03bde112ef38f7a34d6904c424ba66bea5cdcf12890230bf39f9580473140ed9c946fef328b6e5238a345a"
 }

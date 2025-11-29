@@ -55,13 +55,7 @@ export class YumeClient extends Client {
             cache: {
                 adapter: new RedisAdapter({
                     redisOptions: {
-                        password: process.env.REDIS_PASSWORD,
-                        username: process.env.REDIS_USERNAME,
-                        socket: {
-                            host: process.env.REDIS_HOST,
-                            port: parseInt(process.env.REDIS_PORT),
-                            tls: true,
-                        },
+                        url: process.env.REDIS_URL,
                     },
                 }),
                 disabledCache: {

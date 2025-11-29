@@ -13,11 +13,11 @@
     "bugs": {
         "url": "https://github.com/aarons124/Yume/issues"
     },
-    "main": "dist/index.js",
+    "main": "./dist/index.js",
     "scripts": {
         "dev": "tsx ./src/index.ts --dev --debug",
         "build": "tsc",
-        "start": "pnpm build && node dist/index.js",
+        "start": "node ./dist/index.js",
         "lint": "biome lint --write ./src",
         "format": "biome format --write ./src",
         "typecheck": "tsc --noEmit",

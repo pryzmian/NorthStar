@@ -53,17 +53,16 @@ export default class PlayCommand extends Command {
         const { options, client, channelId, member, author } = ctx;
         const { query } = options;
 
-        const state = await member.voice();
-        if (!state)
-            return ctx.editOrReply({
-                flags: MessageFlags.Ephemeral,
-                embeds: [
-                    {
-                        color: EmbedColors.Red,
-                        description: "❌ | You must be in a voice channel to use this command.",
-                    },
-                ],
-            });
+        if (!member) return;
+
+        const me = await ctx.me();
+        if (!me) return;
+
+        const state = await member.voice().catch(() => null);
+        if (!state) return;
+
+        const voice = await state.channel();
+        if (!voice) return;
 
         if (!client.manager.isUseable())
             return ctx.editOrReply({
@@ -76,7 +75,8 @@ export default class PlayCommand extends Command {
                 ],
             });
 
-        const me = await ctx.me();
+        if (!me) return;
+
         const botState = await me.voice();
 
         if (botState && botState.channelId !== state.channelId) {
@@ -107,8 +107,7 @@ export default class PlayCommand extends Command {
             requester: omitKeys(author, ["client"]),
         });
 
-        const voice = await state.channel();
-        if (voice?.isStage() && botState.suppress) await botState.setSuppress(false);
+        if (voice.isStage() && botState.suppress) await botState.setSuppress(false);
 
         switch (loadType) {
             case LoadType.Empty:

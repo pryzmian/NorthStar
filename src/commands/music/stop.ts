@@ -50,7 +50,7 @@ export default class StopCommand extends Command {
                     },
                 ],
             });
-        
+
         await player.stop(true);
 
         return ctx.editOrReply({

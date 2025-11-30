@@ -1,10 +1,10 @@
+import { RedisAdapter } from "@slipher/redis-adapter";
 import { Client } from "seyfert";
 import { ActivityType, type GatewayPresenceUpdateData, PresenceUpdateStatus } from "seyfert/lib/types/index.js";
 import { LavalinkHandler } from "./handlers/Lavalink.js";
 import { NorthstarManager } from "./Manager.js";
-import { RedisAdapter } from "@slipher/redis-adapter";
 
-export class YumeClient extends Client {
+export class YumeClient extends Client<true> {
     /**
      * The Northstar manager.
      * @type {NorthstarManager}
@@ -42,7 +42,7 @@ export class YumeClient extends Client {
                 },
                 deferReplyResponse: ({ client }) => ({
                     content: `<a:typing:1228830697343422535> **${client.me.username}** is thinking...`,
-                })
+                }),
             },
         });
 

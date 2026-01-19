@@ -1,6 +1,11 @@
+# Dependencies
 node_modules
+
+# Environment
 .env
 
-/generated/prisma
+# Build outputs
 dist
-commands.json
+
+# Generated files
+/commands.json

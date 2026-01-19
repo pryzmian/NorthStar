@@ -1,4 +1,4 @@
-import { Command, Declare, type GuildCommandContext } from "seyfert";
+import { Command, Declare, type GuildCommandContext, Middlewares } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/it/constants.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
 
@@ -9,35 +9,10 @@ import { MessageFlags } from "seyfert/lib/types/index.js";
     integrationTypes: ["GuildInstall"],
     contexts: ["Guild"],
 })
+@Middlewares(["InVoiceChannel","InSameVoiceChannel"])
 export default class StopCommand extends Command {
     override async run(ctx: GuildCommandContext) {
-        const { client, member } = ctx;
-
-        const state = await member.voice();
-        if (!state)
-            return ctx.editOrReply({
-                flags: MessageFlags.Ephemeral,
-                embeds: [
-                    {
-                        color: EmbedColors.Red,
-                        description: "❌ | You must be in a voice channel to use this command.",
-                    },
-                ],
-            });
-
-        const me = await ctx.me();
-        const botState = await me.voice();
-
-        if (botState && botState.channelId !== state.channelId) {
-            return ctx.editOrReply({
-                embeds: [
-                    {
-                        color: EmbedColors.Red,
-                        description: "❌ | I am already playing music in another voice channel.",
-                    },
-                ],
-            });
-        }
+        const { client } = ctx;
 
         const player = client.manager.getPlayer(ctx.guildId);
         if (!player)
@@ -46,7 +21,7 @@ export default class StopCommand extends Command {
                 embeds: [
                     {
                         color: EmbedColors.Red,
-                        description: "❌ | No player found for this guild.",
+                        description: "`❌` | No player found for this guild.",
                     },
                 ],
             });
@@ -57,7 +32,7 @@ export default class StopCommand extends Command {
             embeds: [
                 {
                     color: EmbedColors.Green,
-                    description: "⏹️ | Stopped the music and cleared the queue. Thank you for listening!",
+                    description: "`⏹️` | Stopped the music and cleared the queue. Thank you for listening!",
                 },
             ],
         });

@@ -1,19 +1,23 @@
-import { RedisAdapter } from "@slipher/redis-adapter";
 import { Client } from "seyfert";
 import { ActivityType, type GatewayPresenceUpdateData, PresenceUpdateStatus } from "seyfert/lib/types/index.js";
+import { NorthStarMiddlewares } from "src/middlewares/index.js";
+import { onMiddlewaresError } from "../utils/defaults.js";
 import { LavalinkHandler } from "./handlers/Lavalink.js";
 import { NorthstarManager } from "./Manager.js";
+import { QueueResource } from "./storage/resources/Queue.js";
 
 export class YumeClient extends Client<true> {
     /**
      * The Northstar manager.
      * @type {NorthstarManager}
+     * @readonly
      */
     readonly manager: NorthstarManager;
 
     /**
      * The lavalink event handler.
      * @type {LavalinkHandler}
+     * @readonly
      */
     readonly handler: LavalinkHandler;
 
@@ -22,6 +26,7 @@ export class YumeClient extends Client<true> {
             gateway: {
                 properties: {
                     os: process.platform,
+                    device: "Discord IOS",
                 },
             },
             allowedMentions: {
@@ -43,6 +48,9 @@ export class YumeClient extends Client<true> {
                 deferReplyResponse: ({ client }) => ({
                     content: `<a:typing:1228830697343422535> **${client.me.username}** is thinking...`,
                 }),
+                defaults: {
+                    onMiddlewaresError
+                }
             },
         });
 
@@ -52,25 +60,23 @@ export class YumeClient extends Client<true> {
 
     async init(): Promise<void> {
         this.setServices({
+            middlewares: NorthStarMiddlewares,
             cache: {
-                adapter: new RedisAdapter({
-                    redisOptions: {
-                        url: process.env.REDIS_URL,
-                    },
-                }),
                 disabledCache: {
                     bans: true,
                     overwrites: true,
                     presences: true,
                     stickers: true,
-                    messages: true,
                     roles: true,
                     emojis: true,
                 },
             },
         });
 
-        await this.handler.load();
+        this.cache.queues = new QueueResource(this.cache, this);
+        if (this.cache.messages) this.cache.messages.filter = (message) => message.author.id === this.botId;
+
+        await this.handler.start();
         await this.start();
     }
 }

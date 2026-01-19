@@ -1,4 +1,4 @@
-import { Command, createIntegerOption, Declare, type GuildCommandContext, Options } from "seyfert";
+import { Command, createIntegerOption, Declare, type GuildCommandContext, Middlewares, Options } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/it/constants.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
 
@@ -17,35 +17,10 @@ const options = {
     contexts: ["Guild"],
 })
 @Options(options)
+@Middlewares(["InVoiceChannel","InSameVoiceChannel"])
 export default class SkipCommand extends Command {
     override async run(ctx: GuildCommandContext<typeof options>) {
         const { client, options } = ctx;
-
-        const state = await ctx.member.voice();
-        if (!state)
-            return ctx.editOrReply({
-                flags: MessageFlags.Ephemeral,
-                embeds: [
-                    {
-                        color: EmbedColors.Red,
-                        description: "❌ | You must be in a voice channel to use this command.",
-                    },
-                ],
-            });
-
-        const me = await ctx.me();
-        const bot = await me.voice();
-
-        if (bot && bot.channelId !== state.channelId)
-            return ctx.editOrReply({
-                flags: MessageFlags.Ephemeral,
-                embeds: [
-                    {
-                        color: EmbedColors.Red,
-                        description: "❌ | I am already playing music in another voice channel.",
-                    },
-                ],
-            });
 
         const player = client.manager.getPlayer(ctx.guildId);
         if (!player)
@@ -54,18 +29,18 @@ export default class SkipCommand extends Command {
                 embeds: [
                     {
                         color: EmbedColors.Red,
-                        description: "❌ | No player found for this guild.",
+                        description: "`❌` | No player found for this guild.",
                     },
                 ],
             });
 
-        if (!player.queue.totalSize) {
+        if (player.queue.isEmpty()) {
             return ctx.editOrReply({
                 flags: MessageFlags.Ephemeral,
                 embeds: [
                     {
                         color: EmbedColors.Red,
-                        description: "❌ | The queue is empty.",
+                        description: "`❌` | There is nothing to skip, add some songs to the queue first.",
                     },
                 ],
             });
@@ -82,7 +57,7 @@ export default class SkipCommand extends Command {
                 embeds: [
                     {
                         color: EmbedColors.Green,
-                        description: `⏭️ | Skipped ${current?.toHyperlink()}`,
+                        description: `\`⏭️\` | Skipped ${current?.toHyperlink()}`,
                     },
                 ],
             });
@@ -93,7 +68,7 @@ export default class SkipCommand extends Command {
                 embeds: [
                     {
                         color: EmbedColors.Red,
-                        description: `❌ | The position must be between 1 and ${player.queue.size}`,
+                        description: `\`❌\` | The position must be between 1 and ${player.queue.size}`,
                     },
                 ],
             });
@@ -104,7 +79,7 @@ export default class SkipCommand extends Command {
             embeds: [
                 {
                     color: EmbedColors.Green,
-                    description: `⏭️ | Skipped to song at position ${position} in the queue.`,
+                    description: `\`⏭️\` | Skipped to song at position ${position} in the queue.`,
                 },
             ],
         });

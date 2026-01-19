@@ -1,5 +1,5 @@
 import { LoadType } from "hoshimi";
-import { Command, createStringOption, Declare, type GuildCommandContext, Options } from "seyfert";
+import { Command, createStringOption, Declare, type GuildCommandContext, Middlewares, Options } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
 import { TimeFormat } from "../../utils/time.js";
@@ -31,8 +31,8 @@ const options = {
             if (!res.tracks.length) return interaction.respond([{ name: "No results found for the given query.", value: "noResults" }]);
 
             return interaction.respond(
-                res.tracks.slice(0, 25).map((track) => ({
-                    name: `${track.info.title} (${TimeFormat.toDotted(track.info.length)})`,
+                res.tracks.slice(0, 10).map((track) => ({
+                    name: `${track.info.title} - ${track.info.author} (${TimeFormat.toDotted(track.info.length)})`,
                     value: track.info.uri,
                 })),
             );
@@ -48,21 +48,11 @@ const options = {
     contexts: ["Guild"],
 })
 @Options(options)
+@Middlewares(["InVoiceChannel","InSameVoiceChannel"])
 export default class PlayCommand extends Command {
     override async run(ctx: GuildCommandContext<typeof options>) {
-        const { options, client, channelId, member, author } = ctx;
+        const { client, channelId, author, options } = ctx;
         const { query } = options;
-
-        if (!member) return;
-
-        const me = await ctx.me();
-        if (!me) return;
-
-        const state = await member.voice().catch(() => null);
-        if (!state) return;
-
-        const voice = await state.channel();
-        if (!voice) return;
 
         if (!client.manager.isUseable())
             return ctx.editOrReply({
@@ -70,31 +60,20 @@ export default class PlayCommand extends Command {
                 embeds: [
                     {
                         color: EmbedColors.Red,
-                        description: "❌ | The music service is currently unavailable.",
+                        description: "❌ | The music service is currently unavailable. Please try again later.",
                     },
                 ],
             });
 
-        if (!me) return;
-
-        const botState = await me.voice();
-
-        if (botState && botState.channelId !== state.channelId) {
-            return ctx.editOrReply({
-                embeds: [
-                    {
-                        color: EmbedColors.Red,
-                        description: "❌ | I am already playing music in another voice channel.",
-                    },
-                ],
-            });
-        }
+        const bot = await ctx.me("flow");
+        const memberVoiceState = await ctx.member.voice().catch(() => null);
+        const botVoiceState = await bot.voice().catch(() => null);
 
         await ctx.deferReply();
 
         const player = client.manager.createPlayer({
             guildId: ctx.guildId,
-            voiceId: state.channelId!,
+            voiceId: memberVoiceState!.channelId!,
             textId: channelId,
             volume: 100,
             selfDeaf: true,
@@ -107,7 +86,8 @@ export default class PlayCommand extends Command {
             requester: omitKeys(author, ["client"]),
         });
 
-        if (voice.isStage() && botState.suppress) await botState.setSuppress(false);
+        const memberVoiceChannel = await memberVoiceState!.channel();
+        if (memberVoiceChannel?.isStage() && botVoiceState?.suppress) await botVoiceState.setSuppress(false);
 
         switch (loadType) {
             case LoadType.Empty:
@@ -116,7 +96,7 @@ export default class PlayCommand extends Command {
                     embeds: [
                         {
                             color: EmbedColors.Red,
-                            description: "❌ | No results found for the given query.",
+                            description: `\`❌\` | No results found for the given query.\n\`${query}\``,
                         },
                     ],
                 });
@@ -134,7 +114,7 @@ export default class PlayCommand extends Command {
                     embeds: [
                         {
                             color: EmbedColors.Green,
-                            description: `✅ | Added **${track.toHyperlink()}** [${duration}] to the queue.`,
+                            description: `\`✅\` | Added **${track.toHyperlink()}** [${duration}] to the queue.`,
                         },
                     ],
                 });
@@ -149,7 +129,7 @@ export default class PlayCommand extends Command {
                         embeds: [
                             {
                                 color: EmbedColors.Green,
-                                description: `✅ | Added playlist **${playlist.info.name}** (${tracks.length} tracks) to the queue.`,
+                                description: `\`✅\` | Added playlist **${playlist.info.name}** (${tracks.length} tracks) to the queue.`,
                             },
                         ],
                     });

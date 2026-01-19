@@ -19,7 +19,7 @@ export class LavalinkHandler extends BaseHandler {
      * The lavalink events collection.
      * @type {Map<string, Lavalink>}
      */
-    readonly values: Map<LavalinkEventNames, Lavalink> = new Map<LavalinkEventNames, Lavalink>();
+    readonly events: Map<LavalinkEventNames, Lavalink> = new Map<LavalinkEventNames, Lavalink>();
 
     /**
      * The client instance.
@@ -36,7 +36,7 @@ export class LavalinkHandler extends BaseHandler {
      * Loads the handler.
      * @returns {Promise<void>}
      */
-    public async load(): Promise<void> {
+    public async start(): Promise<void> {
         const files = await this.loadFilesK<{ default: Lavalink }>(
             await this.getFiles(await this.client.getRC().then((x) => x.locations.lavalink)),
         );
@@ -65,7 +65,7 @@ export class LavalinkHandler extends BaseHandler {
             if (event.once) this.client.manager.once(event.name, run);
             else this.client.manager.on(event.name, run);
 
-            this.values.set(event.name, event);
+            this.events.set(event.name, event);
         }
     }
 
@@ -75,7 +75,7 @@ export class LavalinkHandler extends BaseHandler {
      * @returns {Promise<void>} Boo! A promise.
      */
     public async reload(name: LavalinkEventNames): Promise<void> {
-        const oldEvent: Lavalink | undefined = this.values.get(name);
+        const oldEvent: Lavalink | undefined = this.events.get(name);
         if (!oldEvent?.filepath) return;
 
         this.client.manager.removeListener(oldEvent.name, oldEvent.run as never);
@@ -90,7 +90,7 @@ export class LavalinkHandler extends BaseHandler {
         if (newEvent.once) this.client.manager.once(newEvent.name, run);
         else this.client.manager.on(newEvent.name, run);
 
-        this.values.set(newEvent.name, newEvent);
+        this.events.set(newEvent.name, newEvent);
     }
 
     /**
@@ -99,7 +99,7 @@ export class LavalinkHandler extends BaseHandler {
      * @returns {Promise<void>} A promise? Now that's a surprise.
      */
     public async reloadAll(): Promise<void> {
-        for (const name of this.values.keys()) {
+        for (const name of this.events.keys()) {
             await this.reload(name);
         }
     }

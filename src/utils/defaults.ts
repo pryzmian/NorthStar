@@ -1,4 +1,5 @@
 import type { AnyContext } from "seyfert";
+import { EmbedColors } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
 
 /**
@@ -10,6 +11,11 @@ import { MessageFlags } from "seyfert/lib/types/index.js";
 export function onMiddlewaresError(context: AnyContext, error: string) {
     return context.editOrReply({
         flags: MessageFlags.Ephemeral,
-        content: error,
+        embeds: [
+            {
+                color: EmbedColors.Red,
+                description: error
+            }
+        ]
     });
 }

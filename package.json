@@ -24,33 +24,30 @@
         "prepare": "husky"
     },
     "dependencies": {
-        "@prisma/client": "^7.0.0",
-        "@prisma/extension-accelerate": "^3.0.0",
-        "@slipher/redis-adapter": "^0.0.5",
         "dotenv": "^17.2.3",
         "hoshimi": "github:Ganyu-Studios/hoshimi#lib",
         "seyfert": "github:tiramisulabs/seyfert"
     },
     "devDependencies": {
-        "@biomejs/biome": "^2.3.7",
-        "@types/node": "^24.10.1",
+        "@biomejs/biome": "^2.3.11",
+        "@types/node": "^25.0.9",
         "husky": "^9.1.7",
         "lint-staged": "^16.2.7",
-        "prisma": "^7.0.0",
-        "tsx": "^4.20.6",
+        "tsx": "^4.21.0",
         "typescript": "^5.9.3"
     },
     "lint-staged": {
-        "*.{ts,tsx,js,jsx,json}": [
-            "biome format --write",
-            "biome lint"
+        "*.{ts,js,json}": [
+            "biome format --write ./src",
+            "biome lint --write ./src"
         ]
     },
     "pnpm": {
         "onlyBuiltDependencies": [
-            "@biomejs/biome",
-            "esbuild"
+            "esbuild",
+            "seyfert",
+            "hoshimi"
         ]
     },
-    "packageManager": "pnpm@10.24.0+sha512.01ff8ae71b4419903b65c60fb2dc9d34cf8bb6e06d03bde112ef38f7a34d6904c424ba66bea5cdcf12890230bf39f9580473140ed9c946fef328b6e5238a345a"
+    "packageManager": "pnpm@10.28.0+sha512.05df71d1421f21399e053fde567cea34d446fa02c76571441bfc1c7956e98e363088982d940465fd34480d4d90a0668bc12362f8aa88000a64e83d0b0e47be48"
 }

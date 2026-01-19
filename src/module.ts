@@ -1,11 +1,17 @@
 import type { Omit } from "hoshimi";
-import type { ParseClient, User } from "seyfert";
+import type { ParseClient, ParseMiddlewares, User } from "seyfert";
+import type { NorthStarMiddlewares } from "./middlewares/index.js";
 import type { YumeClient } from "./structures/Client.js";
+import type { QueueResource } from "./structures/storage/resources/Queue.js";
 
 declare module "seyfert" {
     interface InternalOptions {
         asyncCache: false;
-        withPrefix: true;
+        withPrefix: false;
+    }
+
+    interface Cache {
+        queues: QueueResource;
     }
 
     interface ExtendedRCLocations {
@@ -13,6 +19,7 @@ declare module "seyfert" {
     }
 
     interface UsingClient extends ParseClient<YumeClient> {}
+    interface RegisteredMiddlewares extends ParseMiddlewares<typeof NorthStarMiddlewares> {}
 }
 
 declare module "hoshimi" {
